@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatStore } from '@/lib/store/chatStore';
 import Link from 'next/link';
-import { History, ArrowLeft, MessageSquare, Settings, Zap, Swords, BookOpen } from 'lucide-react';
+import { History, ArrowLeft, MessageSquare, Settings, Zap, Swords, BookOpen, LogOut } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 const models = [
   { name: 'GPT-5.2 Thinking (Guided)', provider: 'openai' as const, hasSystemPrompt: true, supportsVision: true },
@@ -27,6 +29,12 @@ const providerStyle: Record<string, { dot: string; bg: string; border: string; l
 export default function AnalyzePage() {
   const [activeModel, setActiveModel] = useState<string | null>(null);
   const { conversations } = useChatStore();
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
   
   const activeModelConfig = models.find(m => m.name === activeModel);
   
@@ -68,6 +76,13 @@ export default function AnalyzePage() {
               <History className="w-4 h-4" />
               History
             </Link>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-white border border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600 text-gray-700 text-sm font-normal transition-colors flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
         </div>
         

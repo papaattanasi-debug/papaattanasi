@@ -26,7 +26,7 @@ export default function LoginPage() {
       
       if (error) throw error;
       
-      router.push('/evaluate');
+      router.push('/analyze');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

@@ -32,7 +32,7 @@ export default function RegisterPage() {
       
       if (error) throw error;
       
-      router.push('/evaluate');
+      router.push('/analyze');
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {

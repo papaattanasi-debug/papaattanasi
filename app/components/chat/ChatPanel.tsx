@@ -63,13 +63,37 @@ export function ChatPanel({ modelName, provider, hasSystemPrompt, supportsVision
     }
   }, [fullSize]);
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File, maxWidth = 1024, quality = 0.7): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = (h * maxWidth) / w;
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setPendingImageName(file.name);
-      const reader = new FileReader();
-      reader.onload = () => setPendingImage(reader.result as string);
-      reader.readAsDataURL(file);
+      const compressed = await compressImage(file);
+      setPendingImage(compressed);
     }
     // Reset input so same file can be selected again
     if (e.target) e.target.value = '';

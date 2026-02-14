@@ -6,6 +6,9 @@ import { AI_MODELS } from '@/lib/ai/types';
 import { PROFESSIONAL_ANALYSIS_PROMPT, PROFESSIONAL_ANALYSIS_PROMPT_TEXT_ONLY } from '@/lib/ai/prompts';
 import { createClient } from '@supabase/supabase-js';
 
+// Increase serverless function timeout
+export const maxDuration = 60; // 60 seconds for AI responses
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -13,7 +16,16 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { modelName, messages, systemPrompt, conversationId } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: 'Request body too large or invalid JSON. Try using a smaller image.' },
+        { status: 413 }
+      );
+    }
+    const { modelName, messages, systemPrompt, conversationId } = body;
     
     if (!modelName || !messages || messages.length === 0) {
       return NextResponse.json(

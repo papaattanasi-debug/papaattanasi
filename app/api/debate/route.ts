@@ -4,9 +4,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { chatWithProvider } from '@/lib/ai/providers';
 import { AI_MODELS } from '@/lib/ai/types';
 
+// Increase serverless function timeout and body size
+export const maxDuration = 60; // 60 seconds for AI responses
+
 export async function POST(request: NextRequest) {
   try {
-    const { modelName, messages, topic, imageUrl } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: 'Request body too large or invalid JSON. Try using a smaller image.' },
+        { status: 413 }
+      );
+    }
+    const { modelName, messages, topic, imageUrl } = body;
     
     if (!modelName || !topic) {
       return NextResponse.json(

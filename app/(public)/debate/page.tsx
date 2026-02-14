@@ -81,7 +81,18 @@ function DebateContent() {
         })
       });
       
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        return {
+          id: `${Date.now()}-err`,
+          modelName: currentModel,
+          content: '',
+          error: `Server error (${res.status}): ${res.statusText}. The image may be too large.`,
+          createdAt: new Date().toISOString(),
+        };
+      }
       
       if (data.success && data.response) {
         return {
@@ -416,14 +427,38 @@ function SetupView({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    Array.from(files).forEach(file => {
+  const compressImage = (file: File, maxWidth = 1024, quality = 0.7): Promise<string> => {
+    return new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = () => onImagesChange([...images, reader.result as string]);
+      reader.onload = () => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = (h * maxWidth) / w;
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = reader.result as string;
+      };
       reader.readAsDataURL(file);
     });
+  };
+  
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      const compressed = await compressImage(file);
+      onImagesChange([...images, compressed]);
+    }
     if (e.target) e.target.value = '';
   };
   

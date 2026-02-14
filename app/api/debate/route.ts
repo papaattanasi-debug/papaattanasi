@@ -35,15 +35,9 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Build system prompt - neutral, no mention of debate or other AI
     const hasImage = !!imageUrl;
-    const systemPrompt = hasImage
-      ? `You are a knowledgeable assistant. The user wants to discuss the following topic in relation to an image they shared: "${topic}"
-
-Respond naturally and thoughtfully. Keep responses concise but substantive (2-4 paragraphs). Reference specific visual details from the image when relevant.`
-      : `You are a knowledgeable assistant. The user wants to discuss the following topic: "${topic}"
-
-Respond naturally and thoughtfully. Keep responses concise but substantive (2-4 paragraphs).`;
+    
+    // No system prompt - let models respond freely
     
     // Build messages for the API
     const apiMessages: Array<{ role: 'user' | 'assistant'; content: string; imageUrl?: string }> = [];
@@ -81,7 +75,7 @@ Respond naturally and thoughtfully. Keep responses concise but substantive (2-4 
       model.provider,
       apiMessages,
       model.apiKey,
-      systemPrompt
+      undefined
     );
     
     return NextResponse.json({

@@ -69,7 +69,7 @@ function AnalyzeContent() {
               className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-normal transition-colors flex items-center gap-2"
             >
               <Swords className="w-4 h-4" />
-              AI Debate
+              AI Communication
             </Link>
             <Link 
               href="/predictions"

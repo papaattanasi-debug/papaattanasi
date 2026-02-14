@@ -35,28 +35,15 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Build system prompt for debate
+    // Build system prompt - neutral, no mention of debate or other AI
     const hasImage = !!imageUrl;
-    const debateSystemPrompt = hasImage
-      ? `You are participating in an intellectual debate/discussion with another AI model. You are analyzing and discussing image(s) that have been shared. The discussion topic is: "${topic}"
+    const systemPrompt = hasImage
+      ? `You are a knowledgeable assistant. The user wants to discuss the following topic in relation to an image they shared: "${topic}"
 
-Rules:
-- Analyze the image(s) carefully and reference specific visual elements in your arguments.
-- Respond directly to what the other model said (or start the discussion if you go first).
-- Be thoughtful, articulate, and bring unique perspectives about what you see.
-- Keep responses concise but substantive (2-4 paragraphs max).
-- You may agree, disagree, or build upon points made.
-- Be respectful but don't hesitate to challenge ideas.
-- Do NOT mention that you are an AI or reference your model name.`
-      : `You are participating in an intellectual debate/discussion with another AI model. The topic is: "${topic}"
+Respond naturally and thoughtfully. Keep responses concise but substantive (2-4 paragraphs). Reference specific visual details from the image when relevant.`
+      : `You are a knowledgeable assistant. The user wants to discuss the following topic: "${topic}"
 
-Rules:
-- Respond directly to what the other model said (or start the discussion if you go first).
-- Be thoughtful, articulate, and bring unique perspectives.
-- Keep responses concise but substantive (2-4 paragraphs max).
-- You may agree, disagree, or build upon points made.
-- Be respectful but don't hesitate to challenge ideas.
-- Do NOT mention that you are an AI or reference your model name.`;
+Respond naturally and thoughtfully. Keep responses concise but substantive (2-4 paragraphs).`;
     
     // Build messages for the API
     const apiMessages: Array<{ role: 'user' | 'assistant'; content: string; imageUrl?: string }> = [];
@@ -71,22 +58,22 @@ Rules:
       }
     }
     
-    // If first turn, add starter with optional image
+    // If first turn, use the topic as the initial prompt
     if (apiMessages.length === 0) {
       apiMessages.push({
         role: 'user',
         content: hasImage 
-          ? `Let's discuss this image. Topic: "${topic}". Please share your opening analysis and thoughts.`
-          : `Let's discuss: "${topic}". Please share your opening thoughts.`,
+          ? topic
+          : topic,
         imageUrl: imageUrl || undefined,
       });
     }
     
-    // If last message is from this model, add continuation prompt
+    // If last message is from this model, add a continuation prompt
     if (apiMessages.length > 0 && apiMessages[apiMessages.length - 1].role === 'assistant') {
       apiMessages.push({
         role: 'user',
-        content: 'Please continue the discussion.',
+        content: 'Continue.',
       });
     }
     
@@ -94,7 +81,7 @@ Rules:
       model.provider,
       apiMessages,
       model.apiKey,
-      debateSystemPrompt
+      systemPrompt
     );
     
     return NextResponse.json({

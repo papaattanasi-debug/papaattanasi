@@ -227,8 +227,8 @@ function DebateContent() {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-xl font-normal text-gray-900">AI Debate</h1>
-            <p className="text-xs text-gray-500 font-light">Two models discuss a topic autonomously</p>
+            <h1 className="text-xl font-normal text-gray-900">AI Communication</h1>
+            <p className="text-xs text-gray-500 font-light">Two models communicate on a topic</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -248,7 +248,7 @@ function DebateContent() {
                 className="px-3 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-600 text-sm transition-colors flex items-center gap-2 rounded"
               >
                 <RotateCcw className="w-4 h-4" />
-                New Debate
+                New Session
               </button>
               {turnCount < maxTurns && (
                 <button
@@ -310,7 +310,7 @@ function DebateContent() {
           <div className="max-w-3xl mx-auto px-6 py-6 space-y-4">
             {/* Topic banner */}
             <div className="text-center py-4 mb-4">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Topic</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Prompt</p>
               <p className="text-sm text-gray-700 font-light italic">&ldquo;{topic}&rdquo;</p>
               {debateImages.length > 0 && (
                 <div className="flex justify-center gap-3 mt-4">
@@ -471,7 +471,7 @@ function SetupView({
       <div className="max-w-2xl mx-auto py-10 px-6">
         <div className="text-center mb-10">
           <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h2 className="text-lg font-normal text-gray-900 mb-1">Setup AI Debate</h2>
+          <h2 className="text-lg font-normal text-gray-900 mb-1">Setup AI Communication</h2>
           <p className="text-sm text-gray-500 font-light">
             Select two models, a topic, and optionally images to discuss.
           </p>
@@ -533,11 +533,11 @@ function SetupView({
         
         {/* Topic */}
         <div className="mb-6">
-          <label className="block text-xs text-gray-600 font-medium uppercase tracking-wide mb-2">Topic</label>
+          <label className="block text-xs text-gray-600 font-medium uppercase tracking-wide mb-2">Initial Prompt</label>
           <textarea
             value={topic}
             onChange={(e) => onTopicChange(e.target.value)}
-            placeholder="Enter the debate topic or question..."
+            placeholder="Enter the initial prompt or topic..."
             className="w-full h-24 px-4 py-3 bg-gray-50 border border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-500 focus:bg-white resize-none rounded-lg font-light transition-colors"
           />
         </div>
@@ -583,7 +583,7 @@ function SetupView({
           className="w-full py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white text-sm font-normal transition-colors flex items-center justify-center gap-2 rounded-lg"
         >
           <Play className="w-4 h-4" />
-          Start Debate
+          Start Communication
         </button>
         
         {selectedA && selectedB && selectedA === selectedB && (

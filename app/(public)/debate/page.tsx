@@ -8,6 +8,7 @@ import {
   ArrowLeft, Play, Square, Clock, RotateCcw, 
   Loader2, MessageSquare, Copy, Check, Image as ImageIcon, X, Plus
 } from 'lucide-react';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 const models = [
   { name: 'GPT-5.2 Thinking (Guided)', provider: 'openai', short: 'GPT-5.2' },
@@ -28,6 +29,14 @@ const providerColor: Record<string, { dot: string; bg: string; text: string }> =
 };
 
 export default function DebatePage() {
+  return (
+    <AuthGuard>
+      <DebateContent />
+    </AuthGuard>
+  );
+}
+
+function DebateContent() {
   const {
     modelA, modelB, topic, messages, isRunning, currentTurn, turnCount, maxTurns,
     setModels, setTopic, setMaxTurns, addMessage, setRunning, setCurrentTurn, incrementTurn, reset,

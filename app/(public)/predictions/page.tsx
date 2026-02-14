@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, FileText, ChevronDown, ChevronUp, BookOpen, Minus } from 'lucide-react';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 interface Paper {
   title: string;
@@ -185,6 +186,14 @@ The mathematical output (recursion, combinatorics) has a formal-logical structur
 ];
 
 export default function PredictionsPage() {
+  return (
+    <AuthGuard>
+      <PredictionsContent />
+    </AuthGuard>
+  );
+}
+
+function PredictionsContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

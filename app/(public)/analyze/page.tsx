@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { History, ArrowLeft, MessageSquare, Settings, Zap, Swords, BookOpen, LogOut } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 const models = [
   { name: 'GPT-5.2 Thinking (Guided)', provider: 'openai' as const, hasSystemPrompt: true, supportsVision: true },
@@ -27,6 +28,14 @@ const providerStyle: Record<string, { dot: string; bg: string; border: string; l
 };
 
 export default function AnalyzePage() {
+  return (
+    <AuthGuard>
+      <AnalyzeContent />
+    </AuthGuard>
+  );
+}
+
+function AnalyzeContent() {
   const [activeModel, setActiveModel] = useState<string | null>(null);
   const { conversations } = useChatStore();
   const router = useRouter();

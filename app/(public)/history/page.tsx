@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft, MessageSquare, Trash2, Download, LogOut } from 'lucide-react';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 interface ConversationSummary {
   id: string;
@@ -24,6 +25,14 @@ const providerColors: Record<string, string> = {
 };
 
 export default function HistoryPage() {
+  return (
+    <AuthGuard>
+      <HistoryContent />
+    </AuthGuard>
+  );
+}
+
+function HistoryContent() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();

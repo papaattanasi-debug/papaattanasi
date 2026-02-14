@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
@@ -12,6 +12,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checking, setChecking] = useState(true);
+  
+  // If already logged in, redirect to analyze
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.replace('/analyze');
+      } else {
+        setChecking(false);
+      }
+    });
+  }, [router]);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +45,14 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+  
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-gray-400 text-sm">Loading...</div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">

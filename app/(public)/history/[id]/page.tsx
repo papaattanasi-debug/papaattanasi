@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft, Download, Clock, Copy, Check, LogOut } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import jsPDF from 'jspdf';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 interface Message {
   id: string;
@@ -36,6 +37,14 @@ const providerBadge: Record<string, string> = {
 };
 
 export default function ConversationDetailPage() {
+  return (
+    <AuthGuard>
+      <ConversationDetailContent />
+    </AuthGuard>
+  );
+}
+
+function ConversationDetailContent() {
   const params = useParams();
   const router = useRouter();
   const [conversation, setConversation] = useState<ConversationDetail | null>(null);
